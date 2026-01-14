@@ -69,20 +69,17 @@ export const useAppStore = create<AppState>()(
         {
             name: 'bitematch-storage',
             storage: createJSONStorage(() => AsyncStorage),
-            // Convert Set to Array for JSON serialization
             partialize: (state) => ({
-                ...state,
-                swipedIds: Array.from(state.swipedIds) as any,
+                likedRestaurants: state.likedRestaurants,
+                swipedIds: Array.from(state.swipedIds),
+                hasCompletedOnboarding: state.hasCompletedOnboarding,
             }),
-            // Convert Array back to Set after hydration
-            onRehydrateStorage: () => (state) => {
-                if (state) {
-                    if (Array.isArray(state.swipedIds)) {
-                        state.swipedIds = new Set(state.swipedIds);
-                    } else if (!(state.swipedIds instanceof Set)) {
-                        state.swipedIds = new Set();
-                    }
-                }
+            merge: (persistedState: any, currentState) => {
+                return {
+                    ...currentState,
+                    ...(persistedState as object),
+                    swipedIds: new Set((persistedState as any)?.swipedIds || []),
+                };
             },
         }
     )

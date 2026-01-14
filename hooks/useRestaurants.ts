@@ -57,7 +57,10 @@ export const useRestaurants = () => {
             if (process.env.EXPO_PUBLIC_API_MODE === 'MOCK' || !latitude || !longitude) {
                 await new Promise((resolve) => setTimeout(resolve, 1000));
                 // Filter mock data too
-                const filtered = MOCK_RESTAURANTS.filter(r => !swipedIds.has(r.id));
+                const filtered = MOCK_RESTAURANTS.filter(r => {
+                    const ids = swipedIds instanceof Set ? swipedIds : new Set(swipedIds || []);
+                    return !ids.has(r.id);
+                });
                 setRestaurants(filtered);
             } else {
                 const searchParams: any = {
@@ -100,7 +103,8 @@ export const useRestaurants = () => {
                 }));
 
                 // Filter out swiped IDs
-                const filtered = mapped.filter(r => !swipedIds.has(r.id));
+                const ids = swipedIds instanceof Set ? swipedIds : new Set(swipedIds || []);
+                const filtered = mapped.filter(r => !ids.has(r.id));
 
                 setRestaurants(prev => isNewSearch ? filtered : [...prev, ...filtered]);
 
