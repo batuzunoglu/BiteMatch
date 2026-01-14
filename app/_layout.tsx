@@ -10,6 +10,12 @@ SplashScreen.preventAutoHideAsync();
 
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { useSync } from '../hooks/useSync';
+import { useAuth } from '../hooks/useAuth';
+
+import { useAppStore } from '../hooks/useAppStore';
+import { useRouter, useSegments } from 'expo-router';
+
 export default function RootLayout() {
     const [loaded, error] = useFonts({
         'PlusJakartaSans-Regular': PlusJakartaSans_400Regular,
@@ -19,11 +25,32 @@ export default function RootLayout() {
         'PlusJakartaSans-ExtraBold': PlusJakartaSans_800ExtraBold,
     });
 
+    const { user } = useAuth();
+    useSync();
+    const hasCompletedOnboarding = useAppStore(state => state.hasCompletedOnboarding);
+    const segments = useSegments();
+    const router = useRouter();
+
     useEffect(() => {
         if (loaded || error) {
             SplashScreen.hideAsync();
         }
     }, [loaded, error]);
+
+    useEffect(() => {
+        if (!loaded) return;
+
+        const inTabsGroup = segments[0] === '(tabs)';
+        const onWelcomeScreen = segments[0] === 'welcome';
+
+        if (!hasCompletedOnboarding && !onWelcomeScreen) {
+            // Force onboarding if not complete
+            router.replace('/welcome');
+        } else if (hasCompletedOnboarding && onWelcomeScreen) {
+            // Don't allow welcome screen if onboarding is complete
+            router.replace('/(tabs)');
+        }
+    }, [hasCompletedOnboarding, segments, loaded]);
 
     if (!loaded && !error) {
         return null;
@@ -32,8 +59,9 @@ export default function RootLayout() {
     return (
         <SafeAreaProvider>
             <GestureHandlerRootView style={{ flex: 1 }}>
-                <Stack>
-                    <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name="welcome" />
+                    <Stack.Screen name="(tabs)" />
                 </Stack>
                 <Toast />
             </GestureHandlerRootView>

@@ -22,8 +22,8 @@ const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.35;
 
 interface SwipeCardProps {
     restaurant: Restaurant;
-    onSwipeLeft: () => void;
-    onSwipeRight: () => void;
+    onSwipeLeft: (restaurant: Restaurant) => void;
+    onSwipeRight: (restaurant: Restaurant) => void;
     isFirst: boolean;
 }
 
@@ -48,9 +48,9 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
                     { duration: 300 },
                     () => {
                         if (direction > 0) {
-                            runOnJS(onSwipeRight)();
+                            runOnJS(onSwipeRight)(restaurant);
                         } else {
-                            runOnJS(onSwipeLeft)();
+                            runOnJS(onSwipeLeft)(restaurant);
                         }
                     }
                 );

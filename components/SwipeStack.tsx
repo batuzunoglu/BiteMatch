@@ -12,8 +12,8 @@ const CARD_WIDTH = Math.min(SCREEN_WIDTH - 32, (SCREEN_HEIGHT - 300) * 0.75);
 interface SwipeStackProps {
     data: Restaurant[];
     currentIndex: number;
-    onSwipeLeft: () => void;
-    onSwipeRight: () => void;
+    onSwipeLeft: (restaurant: Restaurant) => void;
+    onSwipeRight: (restaurant: Restaurant) => void;
 }
 
 export const SwipeStack: React.FC<SwipeStackProps> = ({
