@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BiteMatch - Swipe</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ff512e",
+                        "background-light": "#f8f6f5",
+                        "background-dark": "#23120f",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: "Plus Jakarta Sans", sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-overlay {
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 40%, rgba(0, 0, 0, 0) 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen flex justify-center">
+<div class="relative flex h-[844px] w-[390px] flex-col bg-background-light dark:bg-background-dark overflow-hidden shadow-2xl my-auto">
+<!-- Subtle Background Decorative Shapes -->
+<div class="absolute top-[-50px] left-[-50px] w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
+<div class="absolute bottom-[-50px] right-[-50px] w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
+<!-- TopAppBar -->
+<div class="relative z-10 flex items-center bg-transparent p-4 pb-2 justify-between">
+<div class="flex size-12 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-800 shadow-sm border border-zinc-100 dark:border-zinc-700">
+<span class="material-symbols-outlined text-[#1d0f0c] dark:text-zinc-100">person</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="text-[10px] font-bold uppercase tracking-widest text-primary">Discover</span>
+<h1 class="text-lg font-extrabold text-[#1d0f0c] dark:text-zinc-100 tracking-tight">BiteMatch</h1>
+</div>
+<div class="flex w-12 items-center justify-end">
+<button class="flex size-12 cursor-pointer items-center justify-center rounded-full bg-white dark:bg-zinc-800 shadow-sm border border-zinc-100 dark:border-zinc-700">
+<span class="material-symbols-outlined text-[#1d0f0c] dark:text-zinc-100">tune</span>
+</button>
+</div>
+</div>
+<!-- Main Content Area (Swipe Card) -->
+<div class="flex-1 px-4 pt-4 flex flex-col justify-center relative z-10">
+<!-- Hero Swipe Card -->
+<div class="relative w-full aspect-[3/4] rounded-xl overflow-hidden shadow-2xl group cursor-grab active:cursor-grabbing">
+<!-- Background Image -->
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="Close up shot of a juicy gourmet cheeseburger with melting cheddar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBdL05PvbM_tmrjG-BQAIHPwkLObcKcNO77Vx1dnOer44sb_2UoEv1DoyWbKPTGDTbLp5cMaX-OR1z6kn3YXMzWcdjRGMx7IMOb2Td0gF7ibfh3ICpY28Gm07B0a4q_KNydlsfowKQxxL6tzU37DFYFGRVcclxeBBfimEdUAgbqaNKYK-dHXDkOaIBs42-jn3kBcVNO9ZG8L4GZqd9RmA_bB-4pBvIt779sbPMPh8QXMuABbOHJYxJKqGLOamUXFTFepQ33k7ZvrG0');">
+</div>
+<!-- Info Overlay -->
+<div class="absolute inset-0 glass-overlay flex flex-col justify-end p-6">
+<div class="flex flex-col gap-1 translate-y-2 group-hover:translate-y-0 transition-transform">
+<div class="flex items-center gap-2">
+<h2 class="text-white text-3xl font-extrabold leading-tight tracking-tight">The Burger Joint</h2>
+<div class="bg-primary px-2 py-0.5 rounded-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-white filled-icon">star</span>
+<span class="text-white text-xs font-bold">4.8</span>
+</div>
+</div>
+<div class="flex items-center gap-3 text-zinc-200 text-sm font-medium">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                                1.2 km away
+                            </span>
+<span class="w-1 h-1 rounded-full bg-zinc-400"></span>
+<span class="text-white font-bold tracking-widest text-base">$$$</span>
+</div>
+<div class="mt-4 flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-[10px] font-bold text-white uppercase tracking-wider">Artisanal</span>
+<span class="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-[10px] font-bold text-white uppercase tracking-wider">Late Night</span>
+</div>
+</div>
+</div>
+</div>
+<!-- ButtonGroup / Action FABs -->
+<div class="flex justify-center gap-8 py-8 items-center">
+<!-- Dislike Button -->
+<button class="flex size-16 cursor-pointer items-center justify-center rounded-full bg-white dark:bg-zinc-800 text-[#a15445] shadow-xl hover:scale-110 active:scale-95 transition-all border border-zinc-100 dark:border-zinc-700">
+<span class="material-symbols-outlined text-3xl font-bold">close</span>
+</button>
+<!-- Rewind Small Button -->
+<button class="flex size-10 cursor-pointer items-center justify-center rounded-full bg-white dark:bg-zinc-800 text-amber-500 shadow-lg hover:scale-110 active:scale-95 transition-all border border-zinc-100 dark:border-zinc-700">
+<span class="material-symbols-outlined text-xl">undo</span>
+</button>
+<!-- Like Button -->
+<button class="flex size-16 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-xl shadow-primary/40 hover:scale-110 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-3xl filled-icon">favorite</span>
+</button>
+</div>
+</div>
+<!-- BottomNavBar -->
+<div class="relative z-20 flex gap-2 border-t border-zinc-100 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl px-6 pb-8 pt-3">
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined text-[28px] filled-icon">restaurant</span>
+</div>
+<span class="text-[10px] font-bold">Swipe</span>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-zinc-400 dark:text-zinc-500" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined text-[28px]">chat_bubble</span>
+</div>
+<span class="text-[10px] font-bold">Matches</span>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-zinc-400 dark:text-zinc-500" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined text-[28px]">bookmark</span>
+</div>
+<span class="text-[10px] font-bold">Saved</span>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-zinc-400 dark:text-zinc-500" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined text-[28px]">notifications</span>
+</div>
+<span class="text-[10px] font-bold">Activity</span>
+</a>
+</div>
+<!-- Safe Area Home Indicator -->
+<div class="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-full z-30"></div>
+</div>
+</body></html>

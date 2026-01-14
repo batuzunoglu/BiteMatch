@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BiteMatch - Celebration Overlay</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ff512e",
+                        "gold": "#FFB75E",
+                        "background-light": "#f8f6f5",
+                        "background-dark": "#23120f",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .confetti-piece {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased">
+<!-- Main Overlay Container -->
+<div class="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden">
+<!-- Background Layer: Blurred Restaurant Image + Gradient Overlay -->
+<div class="absolute inset-0 z-0">
+<div class="h-full w-full bg-cover bg-center scale-110 blur-xl brightness-50" data-alt="Blurred background of a cozy Italian pizzeria interior" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuACno0gREhRrWZraU8R5yQ4WvVXPHoBF8JXBhZW8oPj9cS2M4Qau4PifnD18SpSW_gxeZVR2oH89GbNkt5YpQV4kfEanYPAztGj1pyZfdlu11RhtdYnprDlwK2hXZ6mwyAPBTeJrbGkwDoA2uJHCO5z1BqqmCec4tGqun68h4U2l6WR5dNZMTX9YIGRy6Z-I_KkOaIiQIWa7m6YT0BwTsuFfp0WogyRAr0rdqxAvYY1QWjrJNLeFsiyaSi5QksMXX4GqG5gWNs7ljM');">
+</div>
+<!-- Vibrant Gradient Overlay -->
+<div class="absolute inset-0 bg-gradient-to-tr from-primary/80 via-primary/40 to-gold/60 mix-blend-multiply"></div>
+</div>
+<!-- Confetti Elements (Static for UI Design) -->
+<div class="absolute inset-0 pointer-events-none z-10 overflow-hidden">
+<div class="confetti-piece bg-gold top-1/4 left-10 rotate-12"></div>
+<div class="confetti-piece bg-white top-1/3 right-12 -rotate-45"></div>
+<div class="confetti-piece bg-primary top-1/2 left-1/4 rotate-90"></div>
+<div class="confetti-piece bg-gold bottom-1/4 right-1/4 rotate-12"></div>
+<div class="confetti-piece bg-white bottom-1/3 left-12 rotate-45"></div>
+<div class="confetti-piece bg-primary top-20 right-1/3 -rotate-12"></div>
+<div class="confetti-piece bg-gold top-1/2 right-10 rotate-45"></div>
+</div>
+<!-- Content Content Container -->
+<div class="relative z-20 flex w-full max-w-md flex-col items-center px-6">
+<!-- Avatar Group with Match Interaction -->
+<div class="flex items-center justify-center mb-8 relative">
+<!-- User Avatar -->
+<div class="relative z-10 -mr-6 group">
+<div class="size-32 rounded-full border-4 border-white shadow-2xl bg-cover bg-center overflow-hidden" data-alt="User profile photo showing a smiling person" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAyf4BODaOLu5m6VxHP4h48KppidJBY68i_x_qtSWrPDwsBReea1k29rcnLYzi81N7u5yFMeiuE-vWXiCyZBiMPFbgG69nrAVaKIuhJNtvHD0pFW4QwqRlUxVJuovmg3GZGEuSTdRwWrlT3qH6sSIZvsUIMCdQWCKxj6llIw537VARUI3bVIKhjVmcHHiEBKU05ihM5MTVLgJwsj30M4FtXB9zjaA1lUgpdkCse02JGLlxEEw9-VcmzDjvfF1hBz9WsZEWrQ9ICmRk');">
+</div>
+</div>
+<!-- Restaurant/Food Avatar -->
+<div class="relative z-0">
+<div class="size-32 rounded-full border-4 border-white shadow-2xl bg-cover bg-center overflow-hidden" data-alt="Close up of a delicious wood-fired pepperoni pizza" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDZqunCllUYJrg-DL6clDC5vcE_pDW4UM1FBe1BU53MKclFG_snp8z0m0SyB1cTQNLsMr_5J-fgzyZQgE_RbjmOUppAoYPfNRi3e9HXjpP19AhuyGC5KxqfnFj7XcgEz16g-fm4rTXGOJUHiVIonfR6wnjqnhxzaYXpMA1ip1rinVzrbuW1kg6AZSZEd8E8kjXlVxl36PuCyjPfAyn_2_c0a2Fq8Fki4M4_PNB2mByZgiEgjVPv9oMqJS8DijHKF1I4x3nZAqUQA9U');">
+</div>
+<!-- Small Heart Icon Badge -->
+<div class="absolute -bottom-2 -right-2 bg-primary text-white size-10 rounded-full flex items-center justify-center shadow-lg border-2 border-white">
+<span class="material-symbols-outlined text-xl" data-icon="favorite">favorite</span>
+</div>
+</div>
+</div>
+<!-- Headline Text -->
+<div class="text-center mb-2">
+<h1 class="text-white text-5xl font-extrabold tracking-tighter drop-shadow-md">It's a Match!</h1>
+</div>
+<!-- Body Text -->
+<div class="text-center mb-12">
+<p class="text-white/90 text-lg font-medium leading-tight px-8">
+                    You and <span class="font-bold text-white underline decoration-gold/50 underline-offset-4">Luigi's Pizzeria</span> are a perfect pair.
+                </p>
+</div>
+<!-- Button Group -->
+<div class="w-full flex flex-col gap-4">
+<!-- Primary Action -->
+<button class="w-full h-14 bg-white text-primary rounded-xl font-bold text-lg shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex items-center justify-center gap-2 active:scale-95 transition-transform">
+<span class="truncate">View Details</span>
+<span class="material-symbols-outlined" data-icon="restaurant_menu">restaurant_menu</span>
+</button>
+<!-- Secondary Action -->
+<button class="w-full h-12 bg-transparent text-white/80 rounded-xl font-bold text-base flex items-center justify-center hover:text-white transition-colors">
+<span class="truncate">Keep Swiping</span>
+</button>
+</div>
+<!-- Sharing Hint -->
+<div class="mt-12 flex items-center gap-2 text-white/50 bg-black/20 backdrop-blur-md px-4 py-2 rounded-full">
+<span class="material-symbols-outlined text-sm" data-icon="share">share</span>
+<span class="text-xs font-bold uppercase tracking-widest">Share this find</span>
+</div>
+</div>
+<!-- Decorative Glow at Bottom -->
+<div class="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
+</div>
+</body></html>
