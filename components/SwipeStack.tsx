@@ -24,13 +24,16 @@ export const SwipeStack: React.FC<SwipeStackProps> = ({
 }) => {
 
     const visibleCards = data
-        .slice(currentIndex, currentIndex + 2)
+        .slice(currentIndex, currentIndex + 3)
         .reverse();
 
     return (
         <View style={styles.container}>
             {visibleCards.map((item, index) => {
-                const isFirst = index === visibleCards.length - 1;
+                const totalCards = visibleCards.length;
+                const isFirst = index === totalCards - 1;
+                // Position in the stack from top (0) to bottom (2)
+                const stackPosition = totalCards - 1 - index;
 
                 return (
                     <Animated.View
@@ -38,8 +41,12 @@ export const SwipeStack: React.FC<SwipeStackProps> = ({
                         style={[
                             styles.cardWrapper,
                             !isFirst && {
-                                transform: [{ scale: 0.95 }, { translateY: 10 }],
-                                opacity: 0.5,
+                                transform: [
+                                    { scale: 1 - (stackPosition * 0.05) },
+                                    { translateY: stackPosition * 12 }
+                                ],
+                                opacity: 1 - (stackPosition * 0.3),
+                                zIndex: -stackPosition
                             }
                         ]}
                     >

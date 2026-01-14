@@ -8,6 +8,8 @@ import "../global.css";
 
 SplashScreen.preventAutoHideAsync();
 
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 export default function RootLayout() {
     const [loaded, error] = useFonts({
         'PlusJakartaSans-Regular': PlusJakartaSans_400Regular,
@@ -28,11 +30,13 @@ export default function RootLayout() {
     }
 
     return (
-        <GestureHandlerRootView style={{ flex: 1 }}>
-            <Stack>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            </Stack>
-            <Toast />
-        </GestureHandlerRootView>
+        <SafeAreaProvider>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+                <Stack>
+                    <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                </Stack>
+                <Toast />
+            </GestureHandlerRootView>
+        </SafeAreaProvider>
     );
 }

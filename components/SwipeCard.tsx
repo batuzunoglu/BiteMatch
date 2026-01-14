@@ -115,6 +115,61 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
                     animatedStyle,
                 ]}
             >
+                {/* LIKE Label */}
+                <Animated.View
+                    style={[
+                        {
+                            position: 'absolute',
+                            top: 40,
+                            left: 30,
+                            zIndex: 100,
+                            borderWidth: 4,
+                            borderColor: '#4ADE80',
+                            paddingHorizontal: 12,
+                            borderRadius: 8,
+                            transform: [{ rotate: '-15deg' }],
+                        },
+                        likeLabelStyle,
+                    ]}
+                >
+                    <Text style={{
+                        fontFamily: 'PlusJakartaSans-ExtraBold',
+                        fontSize: 42,
+                        color: '#4ADE80',
+                        fontWeight: '900',
+                        textTransform: 'uppercase'
+                    }}>
+                        LIKE
+                    </Text>
+                </Animated.View>
+
+                {/* NOPE Label */}
+                <Animated.View
+                    style={[
+                        {
+                            position: 'absolute',
+                            top: 40,
+                            right: 30,
+                            zIndex: 100,
+                            borderWidth: 4,
+                            borderColor: '#F87171',
+                            paddingHorizontal: 12,
+                            borderRadius: 8,
+                            transform: [{ rotate: '15deg' }],
+                        },
+                        nopeLabelStyle,
+                    ]}
+                >
+                    <Text style={{
+                        fontFamily: 'PlusJakartaSans-ExtraBold',
+                        fontSize: 42,
+                        color: '#F87171',
+                        fontWeight: '900',
+                        textTransform: 'uppercase'
+                    }}>
+                        NOPE
+                    </Text>
+                </Animated.View>
                 {/* Full-Bleed Image */}
                 <Image
                     source={getRestaurantPhotoUri(restaurant.photo_reference)}
