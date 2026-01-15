@@ -5,9 +5,10 @@ import { useAuth } from '../../hooks/useAuth';
 import { useRestaurants } from '../../hooks/useRestaurants';
 import { useAppStore } from '../../hooks/useAppStore';
 import { SwipeStack } from '../../components/SwipeStack';
-import { X, Heart, RotateCcw, SlidersHorizontal, User } from 'lucide-react-native';
+import { X, Heart, RotateCcw, SlidersHorizontal, User, Utensils } from 'lucide-react-native';
 import { MatchOverlay } from '../../components/MatchOverlay';
 import { LocationModal } from '../../components/LocationModal';
+import { AuthModal } from '../../components/AuthModal';
 
 export default function DiscoverScreen() {
     const { user, loading: authLoading } = useAuth();
@@ -19,6 +20,10 @@ export default function DiscoverScreen() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [matchedRestaurant, setMatchedRestaurant] = useState<any>(null);
     const [showMatchOverlay, setShowMatchOverlay] = useState(false);
+
+    // Landing Page State
+    const [showAuthModal, setShowAuthModal] = useState(false);
+    const [authInitialView, setAuthInitialView] = useState<'login' | 'signup'>('login');
 
     const handleSwipeRight = (restaurant: any) => {
         addSwipe(restaurant, 'like');
@@ -59,6 +64,11 @@ export default function DiscoverScreen() {
         }
     };
 
+    const openAuth = (view: 'login' | 'signup') => {
+        setAuthInitialView(view);
+        setShowAuthModal(true);
+    };
+
     if (authLoading) {
         return (
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#F8F6F5' }}>
@@ -67,6 +77,62 @@ export default function DiscoverScreen() {
         );
     }
 
+    // ------------------------------------------------------------------
+    // LANDING PAGE (Unauthenticated)
+    // ------------------------------------------------------------------
+    if (!user) {
+        return (
+            <SafeAreaView style={{ flex: 1, backgroundColor: '#0F172A' }}>
+                <View className="flex-1 px-6 justify-center items-center">
+                    {/* Hero Section */}
+                    <View className="items-center mb-12">
+                        <View className="w-48 h-48 bg-orange-500/10 rounded-full items-center justify-center mb-6 shadow-2xl shadow-orange-500/20 border-4 border-orange-500/20">
+                            <Utensils size={80} color="#FF512E" />
+                        </View>
+                        <Text style={{ fontFamily: 'PlusJakartaSans-ExtraBold' }} className="text-4xl text-white text-center mb-2">
+                            BiteMatch
+                        </Text>
+                        <Text style={{ fontFamily: 'PlusJakartaSans-Medium' }} className="text-gray-400 text-center text-lg px-4">
+                            Discover your next favorite meal with a simple swipe.
+                        </Text>
+                    </View>
+
+                    {/* Action Buttons */}
+                    <View className="w-full gap-4">
+                        <TouchableOpacity
+                            onPress={() => openAuth('login')}
+                            className="w-full h-14 bg-[#FF512E] rounded-2xl items-center justify-center shadow-lg shadow-orange-500/30"
+                            activeOpacity={0.9}
+                        >
+                            <Text style={{ fontFamily: 'PlusJakartaSans-Bold' }} className="text-white text-lg">
+                                Log In
+                            </Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            onPress={() => openAuth('signup')}
+                            className="w-full h-14 border-2 border-white/20 rounded-2xl items-center justify-center"
+                            activeOpacity={0.8}
+                        >
+                            <Text style={{ fontFamily: 'PlusJakartaSans-Bold' }} className="text-white text-lg">
+                                Sign Up
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                <AuthModal
+                    isVisible={showAuthModal}
+                    onClose={() => setShowAuthModal(false)}
+                    initialView={authInitialView}
+                />
+            </SafeAreaView>
+        );
+    }
+
+    // ------------------------------------------------------------------
+    // DISCOVER / SWIPE APP (Authenticated)
+    // ------------------------------------------------------------------
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#F8F6F5' }}>
             {/* Header Area */}

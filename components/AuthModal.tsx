@@ -20,15 +20,27 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 interface AuthModalProps {
     isVisible: boolean;
     onClose: () => void;
+    initialView?: 'login' | 'signup';
 }
 
 import { useAuth } from '../hooks/useAuth';
 
-export const AuthModal: React.FC<AuthModalProps> = ({ isVisible, onClose }) => {
+export const AuthModal: React.FC<AuthModalProps> = ({ isVisible, onClose, initialView = 'login' }) => {
     const { signIn, signUp, signInWithGoogle, resetPassword } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [isLogin, setIsLogin] = useState(true);
+    const [isLogin, setIsLogin] = useState(initialView === 'login');
+
+    // Update state when modal visibility or initialView changes
+    React.useEffect(() => {
+        if (isVisible) {
+            setIsLogin(initialView === 'login');
+            setIsReset(false);
+            setEmail('');
+            setPassword('');
+        }
+    }, [isVisible, initialView]);
+
     const [isReset, setIsReset] = useState(false);
     const [loading, setLoading] = useState(false);
 

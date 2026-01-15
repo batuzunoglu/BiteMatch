@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, Dimensions, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { MapPin, ArrowRight, X } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -15,7 +15,9 @@ interface LocationModalProps {
 
 export const LocationModal: React.FC<LocationModalProps> = ({ isVisible, onAccept, onClose }) => {
     const handleAccept = () => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        if (Platform.OS !== 'web') {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        }
         onAccept();
     };
 

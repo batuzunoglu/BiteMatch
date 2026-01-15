@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Image, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image, Dimensions, Platform } from 'react-native';
 import { useAuth } from '../../hooks/useAuth';
 import { useAppStore } from '../../hooks/useAppStore';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -67,10 +67,11 @@ export default function ProfileScreen() {
     );
 
     return (
-        <View className="flex-1 bg-white">
+        <View className="flex-1 bg-white" style={{ flex: 1, height: '100%', minHeight: Platform.select({ web: '100vh', default: '100%' }) } as any}>
             <ScrollView
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: 100 }}
+                contentContainerStyle={{ paddingBottom: 100, flexGrow: 1 }}
+                style={{ flex: 1 }}
                 className="flex-1"
             >
                 {/* Header Section */}
