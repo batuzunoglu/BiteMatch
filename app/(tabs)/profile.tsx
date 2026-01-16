@@ -17,7 +17,7 @@ import {
     Pencil, // Mapping edit
     CircleUserRound
 } from 'lucide-react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, Link } from 'expo-router';
 import { AuthModal } from '../../components/AuthModal';
 import { EditProfileModal } from '../../components/EditProfileModal';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -221,11 +221,13 @@ export default function ProfileScreen() {
                                     label="Personal Information"
                                     onPress={() => setShowEditProfileModal(true)}
                                 />
-                                <MenuItem
-                                    icon={Utensils}
-                                    label="Dietary Preferences"
-                                    last
-                                />
+                                <Link href="/dietary-preferences" asChild>
+                                    <MenuItem
+                                        icon={Utensils}
+                                        label="Dietary Preferences"
+                                        last
+                                    />
+                                </Link>
                             </View>
                         </View>
 
