@@ -171,11 +171,27 @@ export default function DiscoverScreen() {
                     <View style={{ alignItems: 'center' }}>
                         <RotateCcw size={48} color="#CBD5E1" strokeWidth={1} />
                         <Text style={styles.loadingText}>No more options nearby!</Text>
+                        <Text style={{ textAlign: 'center', marginTop: 8, color: '#ef4444' }}>
+                            {locationPermission !== Location.PermissionStatus.GRANTED
+                                ? "Location Access Needed"
+                                : "Check Location Settings"}
+                        </Text>
+                        <Text style={{ textAlign: 'center', marginTop: 4, color: '#94a3b8', fontSize: 10 }}>
+                            Permission: {locationPermission}
+                        </Text>
                         <TouchableOpacity
-                            onPress={() => refetch()}
+                            onPress={() => {
+                                if (locationPermission !== Location.PermissionStatus.GRANTED) {
+                                    handleRequestLocation();
+                                } else {
+                                    refetch();
+                                }
+                            }}
                             style={styles.refreshButton}
                         >
-                            <Text style={styles.refreshButtonText}>Try Again</Text>
+                            <Text style={styles.refreshButtonText}>
+                                {locationPermission !== Location.PermissionStatus.GRANTED ? "Enable Location" : "Try Again"}
+                            </Text>
                         </TouchableOpacity>
                     </View>
                 )}
