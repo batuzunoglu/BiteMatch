@@ -36,6 +36,7 @@ const COLORS = {
 export default function ProfileScreen() {
     const { user, signOut } = useAuth();
     const { likedRestaurants } = useAppStore();
+    const router = useRouter();
     const [showAuthModal, setShowAuthModal] = React.useState(false);
     const [showEditProfileModal, setShowEditProfileModal] = React.useState(false);
     const insets = useSafeAreaInsets();
@@ -247,6 +248,7 @@ export default function ProfileScreen() {
                                 <MenuItem
                                     icon={MessageSquare}
                                     label="Give Feedback"
+                                    onPress={() => router.push('/give-feedback')}
                                     last
                                 />
                             </View>
