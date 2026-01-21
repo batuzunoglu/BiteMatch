@@ -14,13 +14,15 @@ interface SwipeStackProps {
     currentIndex: number;
     onSwipeLeft: (restaurant: Restaurant) => void;
     onSwipeRight: (restaurant: Restaurant) => void;
+    userLocation?: { latitude: number; longitude: number };
 }
 
 export const SwipeStack: React.FC<SwipeStackProps> = ({
     data,
     currentIndex,
     onSwipeLeft,
-    onSwipeRight
+    onSwipeRight,
+    userLocation,
 }) => {
 
     const visibleCards = data
@@ -55,6 +57,7 @@ export const SwipeStack: React.FC<SwipeStackProps> = ({
                             onSwipeLeft={onSwipeLeft}
                             onSwipeRight={onSwipeRight}
                             isFirst={isFirst}
+                            userLocation={userLocation}
                         />
                     </Animated.View>
                 );

@@ -25,19 +25,56 @@ interface SwipeCardProps {
     onSwipeLeft: (restaurant: Restaurant) => void;
     onSwipeRight: (restaurant: Restaurant) => void;
     isFirst: boolean;
+    userLocation?: { latitude: number; longitude: number };
 }
 
+// Haversine formula to find distance in miles
+const getDistanceInMiles = (
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number
+) => {
+    const R = 3958.8; // Radius of the Earth in miles
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+};
+
+// Reverting memo to fix "Component is not a function" crash
 export const SwipeCard: React.FC<SwipeCardProps> = ({
     restaurant,
     onSwipeLeft,
     onSwipeRight,
     isFirst,
+    userLocation,
 }) => {
     const translateX = useSharedValue(0);
 
+    // Calculate distance
+    const distanceString = React.useMemo(() => {
+        if (!userLocation || !restaurant.location) return '...';
+        const dist = getDistanceInMiles(
+            userLocation.latitude,
+            userLocation.longitude,
+            restaurant.location.latitude,
+            restaurant.location.longitude
+        );
+        return `${dist.toFixed(1)} mi away`;
+    }, [userLocation, restaurant.location]);
+
     const gesture = Gesture.Pan()
         .enabled(isFirst)
+        .runOnJS(true)
         .onUpdate((event) => {
+            // Move using UI thread
             translateX.value = event.translationX;
         })
         .onEnd((event) => {
@@ -45,7 +82,7 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
                 const direction = event.translationX > 0 ? 1 : -1;
                 translateX.value = withTiming(
                     direction * SCREEN_WIDTH * 1.5,
-                    { duration: 300 },
+                    { duration: 250 }, // Faster swipe out
                     () => {
                         if (direction > 0) {
                             runOnJS(onSwipeRight)(restaurant);
@@ -59,7 +96,12 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
                     runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Medium);
                 }
             } else {
-                translateX.value = withSpring(0);
+                // Snappy spring back
+                translateX.value = withSpring(0, {
+                    damping: 15,
+                    stiffness: 120,
+                    mass: 0.5
+                });
             }
         });
 
@@ -67,7 +109,7 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
         const rotate = interpolate(
             translateX.value,
             [-SCREEN_WIDTH, 0, SCREEN_WIDTH],
-            [-15, 0, 15]
+            [-10, 0, 10] // Reduced rotation for cleaner look
         );
 
         return {
@@ -115,7 +157,7 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
                     animatedStyle,
                 ]}
             >
-                {/* LIKE Label */}
+                {/* LIKE Label - Unchanged */}
                 <Animated.View
                     style={[
                         {
@@ -143,7 +185,7 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
                     </Text>
                 </Animated.View>
 
-                {/* NOPE Label */}
+                {/* NOPE Label - Unchanged */}
                 <Animated.View
                     style={[
                         {
@@ -170,7 +212,7 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
                         NOPE
                     </Text>
                 </Animated.View>
-                {/* Full-Bleed Image */}
+                {/* Full-Bleed Image - Unchanged */}
                 <Image
                     source={getRestaurantPhotoUri(restaurant.photo_reference)}
                     style={{ position: 'absolute', width: '100%', height: '100%' }}
@@ -179,7 +221,7 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
                     cachePolicy="disk"
                 />
 
-                {/* Bottom Gradient Overlay (Glass Overlay) */}
+                {/* Bottom Gradient Overlay (Glass Overlay) - Unchanged */}
                 <LinearGradient
                     colors={['rgba(0,0,0,0.8)', 'rgba(0,0,0,0.4)', 'rgba(0,0,0,0)']}
                     locations={[0, 0.4, 1]}
@@ -215,7 +257,7 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
                             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                                 <MapPin size={18} color="#FFFFFF" strokeWidth={2.5} />
                                 <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontWeight: '700', fontSize: 15, color: '#FFFFFF' }}>
-                                    1.2 km away
+                                    {distanceString}
                                 </Text>
                             </View>
                             <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.6)' }} />
@@ -224,18 +266,20 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({
                             </Text>
                         </View>
 
-                        {/* Category Pills */}
-                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
-                            <View style={{ backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }}>
-                                <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontWeight: '800', color: '#FFFFFF', fontSize: 11, letterSpacing: 0.5 }}>ARTISANAL</Text>
-                            </View>
-                            <View style={{ backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }}>
-                                <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontWeight: '800', color: '#FFFFFF', fontSize: 11, letterSpacing: 0.5 }}>LATE NIGHT</Text>
-                            </View>
+                    </View>
+
+                    {/* Category Pills */}
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+                        <View style={{ backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }}>
+                            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontWeight: '800', color: '#FFFFFF', fontSize: 11, letterSpacing: 0.5 }}>ARTISANAL</Text>
+                        </View>
+                        <View style={{ backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }}>
+                            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', fontWeight: '800', color: '#FFFFFF', fontSize: 11, letterSpacing: 0.5 }}>LATE NIGHT</Text>
                         </View>
                     </View>
                 </View>
+
             </Animated.View>
-        </GestureDetector>
+        </GestureDetector >
     );
 };
