@@ -111,39 +111,42 @@ export default function DietaryPreferencesScreen() {
                     <Text style={{ fontFamily: 'PlusJakartaSans-Bold' }} className="text-white text-xl mb-4">
                         Dietary Goals
                     </Text>
-                    <View className="flex-row flex-wrap gap-4 justify-between">
+                    <View className="flex-row flex-wrap justify-between">
                         {DIETARY_GOALS.map((goal) => {
                             const isSelected = selectedGoals.includes(goal.id);
-                            const cardWidth = (SCREEN_WIDTH - 48 - 16) / 2; // 2 cols with padding calculation
 
                             return (
                                 <TouchableOpacity
                                     key={goal.id}
                                     onPress={() => toggleGoal(goal.id)}
                                     activeOpacity={0.8}
-                                    style={{ width: cardWidth, height: cardWidth * 0.8 }}
-                                    className="rounded-2xl overflow-hidden relative bg-slate-800"
+                                    className="w-[48%] h-40 rounded-2xl overflow-hidden relative bg-slate-800 mb-4"
                                 >
                                     <View className={`absolute inset-0 z-10 border-4 rounded-2xl ${isSelected ? 'border-[#FF512E]' : 'border-transparent'}`} />
                                     <Image
                                         source={{ uri: goal.image }}
                                         style={{ width: '100%', height: '100%' }}
                                         contentFit="cover"
-                                        className="opacity-80"
+                                        transition={200}
+                                        className="opacity-90"
                                     />
-                                    {/* Gradient Overlay */}
+                                    {/* Gradient Overlay for Text Visibility */}
                                     <LinearGradient
-                                        colors={['transparent', 'rgba(0,0,0,0.9)']}
-                                        style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '60%' }}
+                                        colors={['transparent', 'rgba(15, 23, 42, 0.9)']}
+                                        style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '70%' }}
                                     />
+
                                     {/* Content */}
-                                    <View className="absolute bottom-4 left-4 z-20 flex-row items-center justify-between w-[80%]">
-                                        <Text style={{ fontFamily: 'PlusJakartaSans-Bold' }} className="text-white text-lg">
+                                    <View className="absolute bottom-0 left-0 right-0 p-4 z-20 flex-row items-center justify-between">
+                                        <Text
+                                            style={{ fontFamily: 'PlusJakartaSans-Bold' }}
+                                            className="text-white text-lg shadow-sm"
+                                        >
                                             {goal.label}
                                         </Text>
                                         {isSelected && (
-                                            <View className="bg-[#FF512E] rounded-full p-1">
-                                                <Check size={12} color="white" strokeWidth={4} />
+                                            <View className="bg-[#FF512E] rounded-full p-1.5 shadow-lg">
+                                                <Check size={14} color="white" strokeWidth={4} />
                                             </View>
                                         )}
                                     </View>
