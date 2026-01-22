@@ -22,14 +22,7 @@ export const useSync = () => {
                 try {
                     await firestoreService.saveInteraction(user.uid, item.id, item.type);
                     if (item.type === 'like' && item.restaurant) {
-                        await firestoreService.saveMatch(user.uid, item.id, {
-                            id: item.restaurant.id,
-                            name: item.restaurant.name,
-                            photo_reference: item.restaurant.photo_reference,
-                            rating: item.restaurant.rating,
-                            price_level: item.restaurant.price_level,
-                            address: item.restaurant.address
-                        });
+                        await firestoreService.saveMatch(user.uid, item.restaurant);
                     }
 
                     // Note: In a real app, we'd remove synced items from Zustand here.
