@@ -13,7 +13,11 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.bitematch.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "BiteMatch needs your location to find the best restaurants near you."
+      }
     },
     "android": {
       "adaptiveIcon": {
