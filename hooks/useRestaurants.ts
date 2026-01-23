@@ -9,6 +9,10 @@ export interface Restaurant {
     address?: string;
     photo_reference?: string;
     price_level?: number;
+    location?: {
+        latitude: number;
+        longitude: number;
+    };
 }
 
 const MOCK_RESTAURANTS: Restaurant[] = [
@@ -19,6 +23,7 @@ const MOCK_RESTAURANTS: Restaurant[] = [
         user_ratings_total: 120,
         address: '123 Burger St, Food City',
         price_level: 2,
+        location: { latitude: 40.7128, longitude: -74.0060 }, // NYC
     },
     {
         id: '2',
@@ -27,6 +32,7 @@ const MOCK_RESTAURANTS: Restaurant[] = [
         user_ratings_total: 85,
         address: '456 Maki Ave, Kyoto Dist',
         price_level: 3,
+        location: { latitude: 40.7300, longitude: -74.0000 },
     },
     {
         id: '3',
@@ -35,6 +41,7 @@ const MOCK_RESTAURANTS: Restaurant[] = [
         user_ratings_total: 200,
         address: '789 Dough Rd, Little Italy',
         price_level: 1,
+        location: { latitude: 40.7200, longitude: -73.9900 },
     },
 ];
 
@@ -92,7 +99,7 @@ export const useRestaurants = () => {
                         headers: {
                             'Content-Type': 'application/json',
                             'X-Goog-Api-Key': GOOGLE_PLACES_API_KEY,
-                            'X-Goog-FieldMask': 'places.id,places.displayName,places.rating,places.userRatingCount,places.formattedAddress,places.priceLevel,places.photos',
+                            'X-Goog-FieldMask': 'places.id,places.displayName,places.rating,places.userRatingCount,places.formattedAddress,places.priceLevel,places.photos,places.location',
                         },
                     }
                 );
@@ -108,6 +115,10 @@ export const useRestaurants = () => {
                     address: p.formattedAddress,
                     price_level: p.priceLevel,
                     photo_reference: p.photos?.[0]?.name,
+                    location: p.location ? {
+                        latitude: p.location.latitude,
+                        longitude: p.location.longitude,
+                    } : undefined,
                 }));
 
                 // Filter out swiped IDs

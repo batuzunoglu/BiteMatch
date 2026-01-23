@@ -20,6 +20,7 @@ export default function DiscoverScreen() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [matchedRestaurant, setMatchedRestaurant] = useState<any>(null);
     const [showMatchOverlay, setShowMatchOverlay] = useState(false);
+    const [userLocation, setUserLocation] = useState<{ latitude: number, longitude: number } | undefined>(undefined);
 
     // Landing Page State
     const [showAuthModal, setShowAuthModal] = useState(false);
@@ -27,8 +28,16 @@ export default function DiscoverScreen() {
 
     const handleSwipeRight = (restaurant: any) => {
         addSwipe(restaurant, 'like');
-        setMatchedRestaurant(restaurant);
-        setShowMatchOverlay(true);
+
+        // Simulate match logic (e.g. 20% chance of a "match")
+        // In a real app, this would come from the backend response
+        const isMatch = Math.random() > 0.8;
+
+        if (isMatch) {
+            setMatchedRestaurant(restaurant);
+            setShowMatchOverlay(true);
+        }
+
         setCurrentIndex((prev) => prev + 1);
     };
 
@@ -43,6 +52,10 @@ export default function DiscoverScreen() {
             setLocationPermission(status);
             if (status === Location.PermissionStatus.GRANTED) {
                 const location = await Location.getCurrentPositionAsync({});
+                setUserLocation({
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude
+                });
                 refetch(location.coords.latitude, location.coords.longitude);
             } else if (status === Location.PermissionStatus.UNDETERMINED) {
                 setShowLocationModal(true);
@@ -57,6 +70,10 @@ export default function DiscoverScreen() {
 
         if (status === Location.PermissionStatus.GRANTED) {
             const location = await Location.getCurrentPositionAsync({});
+            setUserLocation({
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude
+            });
             refetch(location.coords.latitude, location.coords.longitude);
         } else {
             // Re-fetch with mock data if denied
@@ -165,6 +182,7 @@ export default function DiscoverScreen() {
                             currentIndex={currentIndex}
                             onSwipeLeft={handleSwipeLeft}
                             onSwipeRight={handleSwipeRight}
+                            userLocation={userLocation}
                         />
                     </View>
                 ) : (
