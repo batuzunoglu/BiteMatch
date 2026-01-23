@@ -16,7 +16,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.bitematch.app",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "BiteMatch needs your location to find the best restaurants near you."
+        "NSLocationWhenInUseUsageDescription": "BiteMatch needs your location to find the best restaurants near you.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -35,6 +36,14 @@
     "plugins": [
       "expo-router",
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "1ecdc247-d6e0-46bc-a011-6ab064e3147f"
+      }
+    }
   }
 }
