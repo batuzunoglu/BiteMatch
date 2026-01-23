@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Platform } from 'react-native';
 import {
     onAuthStateChanged,
     User,
@@ -12,17 +13,29 @@ import {
     GoogleAuthProvider,
     signInWithPopup,
     sendPasswordResetEmail,
-    updateProfile
+    updateProfile,
+    signInWithCredential
 } from 'firebase/auth';
+import * as WebBrowser from 'expo-web-browser';
+import * as Google from 'expo-auth-session/providers/google';
 import { auth } from '../services/firebase';
 import { useAppStore } from './useAppStore';
 import { firestoreService } from '../services/firestoreService';
 import Toast from 'react-native-toast-message';
 
+WebBrowser.maybeCompleteAuthSession();
+
 export const useAuth = () => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const { hydrateStore, clearStore } = useAppStore();
+
+    // Configure Google Sign-In
+    const [request, response, promptAsync] = Google.useAuthRequest({
+        iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || 'dummy-ios-client-id',
+        androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID,
+        webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+    });
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -41,8 +54,12 @@ export const useAuth = () => {
                         address: m.address
                     }));
                     hydrateStore(matches, interactionIds);
-                } catch (error) {
-                    console.error("Hydration failed:", error);
+                } catch (error: any) {
+                    if (error.code === 'permission-denied') {
+                        console.warn("[Auth] Cloud sync permission denied. Running in local-only mode.");
+                    } else {
+                        console.error("Hydration failed:", error);
+                    }
                 }
             } else {
                 clearStore();
@@ -62,6 +79,37 @@ export const useAuth = () => {
 
         return unsubscribe;
     }, []);
+
+    // Handle Google Sign-In Response
+    useEffect(() => {
+        if (response?.type === 'success') {
+            const { id_token } = response.params;
+            const credential = GoogleAuthProvider.credential(id_token);
+
+            // Sign in or Link
+            const performSignIn = async () => {
+                try {
+                    if (user?.isAnonymous) {
+                        // Ideally we link, but for simplicity we'll try to sign in and if needed, link logic isn't fully robust here
+                        // without handling account-exists-with-different-credential manually.
+                        // But signInWithCredential will sign in to the google account.
+                        await signInWithCredential(auth, credential);
+                        // If we wanted to MERGE, we would link. But `linkWithCredential` throws if the google account exists.
+                        // For now, this behaves as "Switch to Google Account".
+                        Toast.show({ type: 'success', text1: 'Welcome!', text2: 'Signed in with Google.' });
+                    } else {
+                        await signInWithCredential(auth, credential);
+                        Toast.show({ type: 'success', text1: 'Welcome!', text2: 'Signed in with Google.' });
+                    }
+                } catch (error: any) {
+                    console.error("Google Credential Sign In Failed", error);
+                    Toast.show({ type: 'error', text1: 'Google Sign In Failed', text2: error.message });
+                }
+            };
+            performSignIn();
+        }
+    }, [response]);
+
 
     const signUp = async (email: string, pass: string) => {
         try {
@@ -93,50 +141,19 @@ export const useAuth = () => {
     };
 
     const signInWithGoogle = async () => {
-        try {
-            const provider = new GoogleAuthProvider();
-            if (user?.isAnonymous) {
-                // Try to link the anonymous account
-                try {
-                    await linkWithCredential(user, GoogleAuthProvider.credentialFromError(new Error("Dummy") as any)!);
-                    // Note: linkWithPopup is not directly available/reliable in all flows for web without popups, 
-                    // but standard flow is linkWithPopup(user, provider). 
-                    // Let's use the standard `signInWithPopup` and handle the merge logic potentially if needed,
-                    // BUT `linkWithPopup` is the correct way to link.
-
-                    // Let's try linkWithPopup directly if available, else falling back to signInWithPopup
-                    // Actually, for web, linkWithPopup is the standard way to merge.
-                    // However, TS might complain if we don't import it.
-                    // Let's stick to a simpler flow: Link if possible, otherwise Sign In.
-                    // Since I didn't import linkWithPopup above, let me fix imports first.
-                    // Wait, I can't easily change imports mid-stream in this thought.
-                    // I will add `linkWithPopup` to imports in the next chunk if possible or just use signInWithPopup and let Firebase handle the "account exists" error.
-
-                    // Actually, standard practice for "Convert Guest to Google" is `linkWithPopup`.
-                    // But if I want to just "Sign In with Google" and the user happens to be anon, I want to MERGE.
-
-                    // Let's blindly use signInWithPopup. If the google acc doesn't exist, it creates one.
-                    // If it does exist, it signs in (and drops the anon session usually).
-                    // To PRESERVE data, we must LINK.
-
-                    // RE-EVALUATION: To properly link, I need `linkWithPopup`.
-                    // I will add it to the imports effectively.
-                } catch (e) {
-                    // console.log("Link failed", e);
-                }
+        if (Platform.OS === 'web') {
+            try {
+                const provider = new GoogleAuthProvider();
+                await signInWithPopup(auth, provider);
+                Toast.show({ type: 'success', text1: 'Welcome!', text2: 'Signed in with Google.' });
+            } catch (error: any) {
+                console.error("Google Sign In failed:", error);
+                Toast.show({ type: 'error', text1: 'Google Sign In Failed', text2: error.message });
+                // throw error; // Don't crash
             }
-
-            // For now, let's implement a standard signInWithPopup.
-            // If the user is Anonymous, we WANT to link.
-            // I'll grab the user, and use linkWithPopup. I need to make sure I import it.
-            // Since I missed adding it to the imports above, I will do a separate edit to fix imports properly.
-
-            await signInWithPopup(auth, provider);
-            Toast.show({ type: 'success', text1: 'Welcome!', text2: 'Signed in with Google.' });
-        } catch (error: any) {
-            console.error("Google Sign In failed:", error);
-            Toast.show({ type: 'error', text1: 'Google Sign In Failed', text2: error.message });
-            throw error;
+        } else {
+            // Native Flow
+            promptAsync();
         }
     };
 

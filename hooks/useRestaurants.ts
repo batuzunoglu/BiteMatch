@@ -113,7 +113,7 @@ export const useRestaurants = () => {
                     rating: p.rating,
                     user_ratings_total: p.userRatingCount,
                     address: p.formattedAddress,
-                    price_level: p.priceLevel,
+                    price_level: p.priceLevel ?? 1, // Default to 1 ($) if undefined to prevent Firestore error
                     photo_reference: p.photos?.[0]?.name,
                     location: p.location ? {
                         latitude: p.location.latitude,

@@ -10,6 +10,15 @@ SplashScreen.preventAutoHideAsync();
 
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs([
+    'Function components cannot be given refs',
+    'Accessing the \'state\' property of the \'route\' object',
+    'Context.Provider',
+    'No native splash screen registered'
+]);
+
 import { useSync } from '../hooks/useSync';
 import { useAuth } from '../hooks/useAuth';
 

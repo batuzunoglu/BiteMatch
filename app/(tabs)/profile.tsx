@@ -79,7 +79,7 @@ export default function ProfileScreen() {
                 {/* sticky top-0 ... px-6 pt-14 pb-4 -> mapped to RN padding */}
                 <View
                     style={{ paddingTop: insets.top + 10 }}
-                    className="px-6 pb-4 bg-white/80 z-50 sticky"
+                    className="px-6 pb-4 bg-white/80 z-50"
                 >
                     <View className="flex-row items-center justify-between">
                         <View className="w-10" />

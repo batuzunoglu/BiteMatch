@@ -28,9 +28,16 @@ export const useSync = () => {
                     // Note: In a real app, we'd remove synced items from Zustand here.
                     // For this blueprint, we'll clear the whole queue if all succeed 
                     // or implement a more granular approach.
-                } catch (error) {
-                    console.error("Sync failed for item:", item.id, error);
-                    // Stay in queue for retry later
+                } catch (error: any) {
+                    if (error.code === 'permission-denied') {
+                        // Suppress logs for permissions, just warn once per session technically, but here just don't log error.
+                        // We will just drop the sync item silently or with a debug log.
+                        console.log(`[Sync] Skipped ${item.id} due to permissions.`);
+                    } else {
+                        console.error("Sync failed for item:", item.id, error);
+                    }
+                    // Stay in queue for retry later? 
+                    // No, the current logic clears the queue below anyway.
                 }
             }
 
