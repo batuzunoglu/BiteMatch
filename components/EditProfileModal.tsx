@@ -15,6 +15,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { X, User, Image as ImageIcon, Save } from 'lucide-react-native';
 import Animated, { FadeIn, SlideInDown } from 'react-native-reanimated';
 import { useAuth } from '../hooks/useAuth';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface EditProfileModalProps {
     isVisible: boolean;
@@ -49,13 +50,15 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isVisible, o
         }
     };
 
+    const insets = useSafeAreaInsets();
+
     return (
-        <View style={StyleSheet.absoluteFill} className="z-50">
+        <View style={StyleSheet.absoluteFill} className="z-50 justify-center">
+            {/* Dark Backdrop */}
             <Animated.View
                 entering={FadeIn}
-                style={StyleSheet.absoluteFill}
+                style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.7)' }]}
             >
-                <BlurView intensity={20} style={StyleSheet.absoluteFill} tint="dark" />
                 <TouchableOpacity
                     activeOpacity={1}
                     style={StyleSheet.absoluteFill}
@@ -65,11 +68,18 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isVisible, o
 
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                className="flex-1 justify-end"
+                className="flex-1 justify-center px-5"
             >
                 <Animated.View
                     entering={SlideInDown.springify().damping(20)}
-                    className="bg-white rounded-t-[40px] px-8 pt-10 pb-12 shadow-2xl"
+                    className="bg-white rounded-[30px] px-8 pt-10 pb-10"
+                    style={{
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 20 },
+                        shadowOpacity: 0.25,
+                        shadowRadius: 25,
+                        elevation: 10
+                    }}
                 >
                     <View className="flex-row items-center justify-between mb-8">
                         <View>
@@ -89,8 +99,8 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isVisible, o
                     </View>
 
                     {/* Inputs */}
-                    <View className="space-y-4 mb-8">
-                        <View className="bg-gray-50 rounded-2xl px-5 py-4 flex-row items-center border border-gray-100 mb-4">
+                    <View className="mb-8">
+                        <View className="bg-white rounded-2xl px-5 py-4 flex-row items-center border border-[#EEEEEE] mb-6">
                             <User size={20} color="#A0A0A0" strokeWidth={2} />
                             <TextInput
                                 placeholder="Display Name"
@@ -101,7 +111,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isVisible, o
                                 style={{ fontFamily: 'PlusJakartaSans-Medium' }}
                             />
                         </View>
-                        <View className="bg-gray-50 rounded-2xl px-5 py-4 flex-row items-center border border-gray-100 mb-4">
+                        <View className="bg-white rounded-2xl px-5 py-4 flex-row items-center border border-[#EEEEEE]">
                             <ImageIcon size={20} color="#A0A0A0" strokeWidth={2} />
                             <TextInput
                                 placeholder="Photo URL"

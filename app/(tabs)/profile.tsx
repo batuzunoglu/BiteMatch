@@ -244,6 +244,7 @@ export default function ProfileScreen() {
                                 <MenuItem
                                     icon={HelpCircle}
                                     label="Help Center"
+                                    onPress={() => router.push('/help-center')}
                                 />
                                 <MenuItem
                                     icon={MessageSquare}
