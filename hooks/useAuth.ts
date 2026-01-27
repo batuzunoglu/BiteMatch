@@ -14,10 +14,13 @@ import {
     signInWithPopup,
     sendPasswordResetEmail,
     updateProfile,
-    signInWithCredential
+    signInWithCredential,
+    OAuthProvider
 } from 'firebase/auth';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
+import * as AppleAuthentication from 'expo-apple-authentication';
+import * as Crypto from 'expo-crypto';
 import { auth } from '../services/firebase';
 import { useAppStore } from './useAppStore';
 import { firestoreService } from '../services/firestoreService';
@@ -157,6 +160,44 @@ export const useAuth = () => {
         }
     };
 
+    const signInWithApple = async () => {
+        try {
+            const csrf = Math.random().toString(36).substring(2, 15);
+            const nonce = Math.random().toString(36).substring(2, 10);
+            const hashedNonce = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, nonce);
+
+            const appleCredential = await AppleAuthentication.signInAsync({
+                requestedScopes: [
+                    AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+                    AppleAuthentication.AppleAuthenticationScope.EMAIL,
+                ],
+                nonce: hashedNonce,
+            });
+
+            const { identityToken } = appleCredential;
+
+            if (!identityToken) {
+                throw new Error('No identity token provided.');
+            }
+
+            const provider = new OAuthProvider('apple.com');
+            const credential = provider.credential({
+                idToken: identityToken,
+                rawNonce: nonce,
+            });
+
+            await signInWithCredential(auth, credential);
+            Toast.show({ type: 'success', text1: 'Welcome!', text2: 'Signed in with Apple.' });
+        } catch (e: any) {
+            if (e.code === 'ERR_REQUEST_CANCELED') {
+                // handle that the user canceled the sign-in flow
+            } else {
+                console.error("Apple Sign In Failed", e);
+                Toast.show({ type: 'error', text1: 'Apple Sign In Failed', text2: e.message });
+            }
+        }
+    };
+
     const resetPassword = async (email: string) => {
         try {
             await sendPasswordResetEmail(auth, email);
@@ -207,5 +248,5 @@ export const useAuth = () => {
         }
     };
 
-    return { user, loading, signUp, signIn, signOut, deleteAccount, signInWithGoogle, resetPassword, updateUserProfile };
+    return { user, loading, signUp, signIn, signOut, deleteAccount, signInWithGoogle, signInWithApple, resetPassword, updateUserProfile };
 };

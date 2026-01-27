@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
@@ -14,6 +14,7 @@ import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { X, Mail, Lock, Chrome, Apple, ArrowRight } from 'lucide-react-native';
 import Animated, { FadeIn, FadeInDown, SlideInDown } from 'react-native-reanimated';
+import * as AppleAuthentication from 'expo-apple-authentication';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -26,13 +27,14 @@ interface AuthModalProps {
 import { useAuth } from '../hooks/useAuth';
 
 export const AuthModal: React.FC<AuthModalProps> = ({ isVisible, onClose, initialView = 'login' }) => {
-    const { signIn, signUp, signInWithGoogle, resetPassword } = useAuth();
+    const { signIn, signUp, signInWithGoogle, signInWithApple, resetPassword } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLogin, setIsLogin] = useState(initialView === 'login');
+    const [isAppleAvailable, setIsAppleAvailable] = useState(false);
 
     // Update state when modal visibility or initialView changes
-    React.useEffect(() => {
+    useEffect(() => {
         if (isVisible) {
             setIsLogin(initialView === 'login');
             setIsReset(false);
@@ -40,6 +42,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isVisible, onClose, initia
             setPassword('');
         }
     }, [isVisible, initialView]);
+
+    useEffect(() => {
+        AppleAuthentication.isAvailableAsync().then(setIsAppleAvailable);
+    }, []);
 
     const [isReset, setIsReset] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -81,6 +87,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isVisible, onClose, initia
             setLoading(false);
         }
     };
+
+    const handleAppleSignIn = async () => {
+        setLoading(true);
+        try {
+            await signInWithApple();
+            onClose();
+        } catch (error) {
+            // Handled
+        } finally {
+            setLoading(false);
+        }
+    };
+
 
     return (
         <View style={StyleSheet.absoluteFill} className="z-50">
@@ -199,10 +218,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isVisible, onClose, initia
                             <Chrome size={20} color="#1A1A1A" strokeWidth={2} />
                             <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold' }} className="ml-2 text-gray-900">Google</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity className="flex-1 h-14 bg-gray-50 rounded-2xl border border-gray-100 items-center justify-center flex-row ml-2">
-                            <Apple size={20} color="#1A1A1A" strokeWidth={2} fill="#1A1A1A" />
-                            <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold' }} className="ml-2 text-gray-900">Apple</Text>
-                        </TouchableOpacity>
+                        {isAppleAvailable && (
+                            <TouchableOpacity
+                                onPress={handleAppleSignIn}
+                                className="flex-1 h-14 bg-gray-50 rounded-2xl border border-gray-100 items-center justify-center flex-row ml-2"
+                            >
+                                <Apple size={20} color="#1A1A1A" strokeWidth={2} fill="#1A1A1A" />
+                                <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold' }} className="ml-2 text-gray-900">Apple</Text>
+                            </TouchableOpacity>
+                        )}
                     </View>
 
                     {/* Footer Toggle */}
