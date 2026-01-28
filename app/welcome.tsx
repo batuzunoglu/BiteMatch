@@ -7,6 +7,7 @@ import { UtensilsCrossed, ArrowRight } from 'lucide-react-native';
 import { useAppStore } from '../hooks/useAppStore';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
+import { AuthModal } from '../components/AuthModal';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -28,6 +29,8 @@ export default function WelcomeScreen() {
         completeOnboarding();
         router.replace('/(tabs)');
     };
+
+    const [showAuthModal, setShowAuthModal] = React.useState(false);
 
     return (
         <View style={styles.container}>
@@ -89,12 +92,20 @@ export default function WelcomeScreen() {
 
                 {/* Secondary Action */}
                 <View style={styles.footer}>
-                    <Text style={styles.footerText}>
-                        Already have an account?{' '}
-                        <Text style={styles.signInLink}>Sign In</Text>
-                    </Text>
+                    <TouchableOpacity onPress={() => setShowAuthModal(true)}>
+                        <Text style={styles.footerText}>
+                            Already have an account?{' '}
+                            <Text style={styles.signInLink}>Sign In</Text>
+                        </Text>
+                    </TouchableOpacity>
                 </View>
             </View>
+
+            <AuthModal
+                isVisible={showAuthModal}
+                onClose={() => setShowAuthModal(false)}
+                initialView="login"
+            />
         </View>
     );
 }

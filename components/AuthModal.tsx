@@ -44,7 +44,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isVisible, onClose, initia
     }, [isVisible, initialView]);
 
     useEffect(() => {
-        AppleAuthentication.isAvailableAsync().then(setIsAppleAvailable);
+        AppleAuthentication.isAvailableAsync().then((avail) => {
+            console.log("[AuthModal] Apple Sign In Available:", avail);
+            setIsAppleAvailable(avail);
+        });
     }, []);
 
     const [isReset, setIsReset] = useState(false);
@@ -77,6 +80,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isVisible, onClose, initia
     };
 
     const handleGoogleSignIn = async () => {
+        console.log("[AuthModal] Google Button Pressed");
         setLoading(true);
         try {
             await signInWithGoogle();
@@ -89,12 +93,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isVisible, onClose, initia
     };
 
     const handleAppleSignIn = async () => {
+        console.log("[AuthModal] Apple Button Pressed");
+        Toast.show({ type: 'info', text1: 'Apple Sign In', text2: 'Initiating...' });
         setLoading(true);
         try {
             await signInWithApple();
             onClose();
         } catch (error) {
-            // Handled
+            console.error("[AuthModal] Apple Error", error);
         } finally {
             setLoading(false);
         }
@@ -102,7 +108,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isVisible, onClose, initia
 
 
     return (
-        <View style={StyleSheet.absoluteFill} className="z-50">
+        <View style={StyleSheet.absoluteFill} className="z-[100]">
             <Animated.View
                 entering={FadeIn}
                 style={StyleSheet.absoluteFill}
@@ -111,13 +117,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isVisible, onClose, initia
                 <TouchableOpacity
                     activeOpacity={1}
                     style={StyleSheet.absoluteFill}
-                    onPress={onClose}
+                    onPress={() => {
+                        console.log("[AuthModal] Backdrop Preset");
+                        onClose();
+                    }}
                 />
             </Animated.View>
 
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 className="flex-1 justify-end"
+                pointerEvents="box-none"
             >
                 <Animated.View
                     entering={SlideInDown.springify().damping(20)}

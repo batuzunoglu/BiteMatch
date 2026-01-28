@@ -162,10 +162,12 @@ export const useAuth = () => {
 
     const signInWithApple = async () => {
         try {
+            console.log("[Auth] Starting Apple Sign In...");
             const csrf = Math.random().toString(36).substring(2, 15);
             const nonce = Math.random().toString(36).substring(2, 10);
             const hashedNonce = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, nonce);
 
+            console.log("[Auth] Requesting Apple Credential...");
             const appleCredential = await AppleAuthentication.signInAsync({
                 requestedScopes: [
                     AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
@@ -175,9 +177,10 @@ export const useAuth = () => {
             });
 
             const { identityToken } = appleCredential;
+            console.log("[Auth] Apple Credential received. Token present:", !!identityToken);
 
             if (!identityToken) {
-                throw new Error('No identity token provided.');
+                throw new Error('No identity token provided by Apple.');
             }
 
             const provider = new OAuthProvider('apple.com');
@@ -186,14 +189,17 @@ export const useAuth = () => {
                 rawNonce: nonce,
             });
 
+            console.log("[Auth] Signing into Firebase...");
             await signInWithCredential(auth, credential);
+            console.log("[Auth] Firebase Sign In Successful");
             Toast.show({ type: 'success', text1: 'Welcome!', text2: 'Signed in with Apple.' });
         } catch (e: any) {
             if (e.code === 'ERR_REQUEST_CANCELED') {
+                console.log("[Auth] User canceled Apple Sign In");
                 // handle that the user canceled the sign-in flow
             } else {
-                console.error("Apple Sign In Failed", e);
-                Toast.show({ type: 'error', text1: 'Apple Sign In Failed', text2: e.message });
+                console.error("[Auth] Apple Sign In Failed", e);
+                Toast.show({ type: 'error', text1: 'Apple Sign In Failed', text2: e.message || 'Unknown error occurred' });
             }
         }
     };
