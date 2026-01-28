@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Image, Dimensions, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image, Dimensions, Platform, Alert, Linking } from 'react-native';
 import { useAuth } from '../../hooks/useAuth';
 import { useAppStore } from '../../hooks/useAppStore';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -15,7 +15,9 @@ import {
     MessageSquare, // Mapping rate_review roughly
     LogOut,
     Pencil, // Mapping edit
-    CircleUserRound
+    CircleUserRound,
+    FileText,
+    Trash2
 } from 'lucide-react-native';
 import { useRouter, Link } from 'expo-router';
 import { AuthModal } from '../../components/AuthModal';
@@ -34,7 +36,7 @@ const COLORS = {
 };
 
 export default function ProfileScreen() {
-    const { user, signOut } = useAuth();
+    const { user, signOut, deleteAccount } = useAuth();
     const { likedRestaurants } = useAppStore();
     const router = useRouter();
     const [showAuthModal, setShowAuthModal] = React.useState(false);
@@ -47,23 +49,48 @@ export default function ProfileScreen() {
         signOut();
     };
 
+    const handleDeleteAccount = () => {
+        Alert.alert(
+            "Delete Account",
+            "Are you sure you want to delete your account? This action is irreversible and will wipe all your data.",
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Delete",
+                    style: "destructive",
+                    onPress: async () => {
+                        try {
+                            await deleteAccount();
+                        } catch (error: any) {
+                            Alert.alert("Error", error.message);
+                        }
+                    }
+                }
+            ]
+        );
+    };
+
+    const openLink = (url: string) => {
+        Linking.openURL(url).catch(err => console.error("Couldn't load page", err));
+    };
+
     // Helper for Menu Item
-    const MenuItem = ({ icon: Icon, label, onPress, last = false }: any) => (
+    const MenuItem = ({ icon: Icon, label, onPress, last = false, destructive = false }: any) => (
         <TouchableOpacity
             onPress={onPress}
             activeOpacity={0.7}
             className={`flex-row items-center px-5 py-4 ${!last ? 'border-b border-gray-200/30' : ''}`}
         >
-            <View className="w-10 h-10 rounded-xl bg-gray-200/50 items-center justify-center mr-4">
-                <Icon size={20} color="#4B5563" strokeWidth={2} className="text-gray-600" />
+            <View className={`w-10 h-10 rounded-xl ${destructive ? 'bg-red-50' : 'bg-gray-200/50'} items-center justify-center mr-4`}>
+                <Icon size={20} color={destructive ? COLORS.destructive : "#4B5563"} strokeWidth={2} />
             </View>
             <Text
                 style={{ fontFamily: 'PlusJakartaSans-SemiBold' }}
-                className="flex-1 text-[15px] text-gray-700"
+                className={`flex-1 text-[15px] ${destructive ? 'text-red-500' : 'text-gray-700'}`}
             >
                 {label}
             </Text>
-            <ChevronRight size={20} color="#9CA3AF" />
+            {!destructive && <ChevronRight size={20} color="#9CA3AF" />}
         </TouchableOpacity>
     );
 
@@ -91,7 +118,6 @@ export default function ProfileScreen() {
                         </Text>
                         <TouchableOpacity className="w-10 h-10 rounded-full items-center justify-center bg-transparent">
                             <Settings size={28} color="#1d0f0c" strokeWidth={2} />
-                            {/* material-symbols-outlined text-2xl is roughly 24-28px */}
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -100,7 +126,6 @@ export default function ProfileScreen() {
                 <View className="px-6 mt-4 gap-8">
 
                     {/* Glassmorphic Hero Card */}
-                    {/* class="glass-hero rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden" */}
                     <LinearGradient
                         colors={['#F25D00', '#FF007F']}
                         start={{ x: 0, y: 0 }}
@@ -137,13 +162,13 @@ export default function ProfileScreen() {
                             style={{ fontFamily: 'PlusJakartaSans-ExtraBold' }}
                             className="text-2xl text-white tracking-tight mb-1 text-center"
                         >
-                            {user?.displayName || 'Alex Johnson'}
+                            {user?.displayName || 'Guest User'}
                         </Text>
                         <Text
                             style={{ fontFamily: 'PlusJakartaSans-Medium' }}
                             className="text-white/80 text-sm mb-6 text-center"
                         >
-                            BiteMatch Platinum Explorer
+                            {isAnonymous ? 'Sign up to sync matches' : 'BiteMatch Platinum Explorer'}
                         </Text>
 
                         {/* Finish Setup Button */}
@@ -152,14 +177,13 @@ export default function ProfileScreen() {
                             className="bg-white px-6 py-2.5 rounded-full shadow-lg active:scale-95"
                         >
                             <Text style={{ fontFamily: 'PlusJakartaSans-Bold' }} className="text-[#ff512e] text-sm">
-                                {isAnonymous ? 'Finish Setup (80%)' : 'Edit Profile'}
+                                {isAnonymous ? 'Sign Up / Login' : 'Edit Profile'}
                             </Text>
                         </TouchableOpacity>
                     </LinearGradient>
 
 
                     {/* Statistical Bento Tiles */}
-                    {/* section flex gap-4 */}
                     <View className="flex-row gap-4">
                         {/* Tile 1 */}
                         <View className="flex-1 bg-[#F9F9F9] rounded-[32px] p-6 shadow-sm items-start gap-3">
@@ -186,20 +210,19 @@ export default function ProfileScreen() {
                         <View className="flex-1 bg-[#F9F9F9] rounded-[32px] p-6 shadow-sm items-start gap-3">
                             <View className="w-10 h-10 rounded-2xl bg-amber-100 items-center justify-center">
                                 <ShieldCheck size={20} color="#F59E0B" strokeWidth={3} />
-                                {/* Amber-500 is roughly #F59E0B */}
                             </View>
                             <View>
                                 <Text
                                     style={{ fontFamily: 'PlusJakartaSans-ExtraBold' }}
                                     className="text-2xl text-[#1d0f0c] leading-none tracking-tight"
                                 >
-                                    Pro
+                                    Free
                                 </Text>
                                 <Text
                                     style={{ fontFamily: 'PlusJakartaSans-Bold' }}
                                     className="text-xs uppercase tracking-widest text-gray-400 mt-2"
                                 >
-                                    Member
+                                    Basic Tier
                                 </Text>
                             </View>
                         </View>
@@ -238,7 +261,7 @@ export default function ProfileScreen() {
                                 style={{ fontFamily: 'PlusJakartaSans-Black' }}
                                 className="text-xs uppercase tracking-[0.2em] text-gray-400 px-2 mb-3"
                             >
-                                Support & Feedback
+                                Support & Legal
                             </Text>
                             <View className="bg-[#F9F9F9] rounded-[24px] overflow-hidden">
                                 <MenuItem
@@ -247,20 +270,45 @@ export default function ProfileScreen() {
                                     onPress={() => router.push('/help-center')}
                                 />
                                 <MenuItem
-                                    icon={MessageSquare}
-                                    label="Give Feedback"
-                                    onPress={() => router.push('/give-feedback')}
+                                    icon={FileText}
+                                    label="Privacy Policy"
+                                    onPress={() => openLink('https://bitematch.app/privacy')}
+                                />
+                                <MenuItem
+                                    icon={ShieldCheck}
+                                    label="Terms of Service"
+                                    onPress={() => openLink('https://bitematch.app/terms')}
                                     last
                                 />
                             </View>
                         </View>
+
+
+                        {/* Danger Zone */}
+                        <View>
+                            <Text
+                                style={{ fontFamily: 'PlusJakartaSans-Black' }}
+                                className="text-xs uppercase tracking-[0.2em] text-red-400 px-2 mb-3"
+                            >
+                                Danger Zone
+                            </Text>
+                            <View className="bg-red-50/50 rounded-[24px] overflow-hidden border border-red-100">
+                                <MenuItem
+                                    icon={Trash2}
+                                    label="Delete Account"
+                                    onPress={handleDeleteAccount}
+                                    destructive
+                                    last
+                                />
+                            </View>
+                        </View>
+
                     </View>
 
                     {/* Sign Out Action */}
                     <TouchableOpacity
                         onPress={handleSignOut}
-                        className="w-full flex-row items-center justify-center gap-2 py-4 rounded-3xl bg-[#C24F5C]/5 active:scale-[0.98]"
-                    // bg-destructive/5
+                        className="w-full flex-row items-center justify-center gap-2 py-4 rounded-3xl bg-[#C24F5C]/5 active:scale-[0.98] mb-8"
                     >
                         <LogOut size={20} color={COLORS.destructive} strokeWidth={2.5} />
                         <Text
