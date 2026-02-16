@@ -70,12 +70,7 @@ export const LocationModal: React.FC<LocationModalProps> = ({ isVisible, onAccep
                         </LinearGradient>
                     </TouchableOpacity>
 
-                    <TouchableOpacity
-                        onPress={onClose}
-                        style={styles.notNowButton}
-                    >
-                        <Text style={styles.notNowText}>Not now, use mock data</Text>
-                    </TouchableOpacity>
+
                 </View>
             </View>
         </Modal>
@@ -159,14 +154,5 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: 'white',
     },
-    notNowButton: {
-        marginTop: 20,
-        padding: 10,
-    },
-    notNowText: {
-        fontFamily: 'PlusJakartaSans-SemiBold',
-        fontSize: 14,
-        color: '#94A3B8',
-        textDecorationLine: 'underline',
-    },
+
 });

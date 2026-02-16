@@ -2,9 +2,10 @@ import React from 'react';
 import { View, Text, TouchableOpacity, Modal, StyleSheet, Dimensions } from 'react-native';
 import { Image } from 'expo-image';
 import { BlurView } from 'expo-blur';
-import { Heart, UtensilsCrossed, Share2, Utensils } from 'lucide-react-native';
+import { Heart, UtensilsCrossed, Utensils, User } from 'lucide-react-native';
 import { getRestaurantPhotoUri } from '../services/imageService';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useAuth } from '../hooks/useAuth';
 
 const { width, height } = Dimensions.get('window');
 
@@ -24,6 +25,8 @@ export const MatchOverlay: React.FC<MatchOverlayProps> = ({
     onViewDetails,
     matchedRestaurant
 }) => {
+    const { user } = useAuth();
+
     if (!matchedRestaurant) return null;
 
     return (
@@ -54,10 +57,16 @@ export const MatchOverlay: React.FC<MatchOverlayProps> = ({
                     {/* Avatars */}
                     <View style={styles.circlesContainer}>
                         <View style={styles.avatarCircle}>
-                            <Image
-                                source={{ uri: 'https://i.pravatar.cc/150?u=batu' }}
-                                style={styles.image}
-                            />
+                            {user?.photoURL ? (
+                                <Image
+                                    source={{ uri: user.photoURL }}
+                                    style={styles.image}
+                                />
+                            ) : (
+                                <View style={[styles.image, { backgroundColor: '#EEC6B3', alignItems: 'center', justifyContent: 'center' }]}>
+                                    <User size={64} color="#8D6E63" />
+                                </View>
+                            )}
                         </View>
                         <View style={styles.restaurantCircle}>
                             <Image
@@ -92,10 +101,6 @@ export const MatchOverlay: React.FC<MatchOverlayProps> = ({
                         </TouchableOpacity>
                     </View>
 
-                    <BlurView intensity={30} tint="light" style={styles.shareBadge}>
-                        <Share2 size={14} color="rgba(255,255,255,0.7)" />
-                        <Text style={styles.shareText}>SHARE THIS FIND</Text>
-                    </BlurView>
                 </View>
             </View>
         </Modal>
@@ -222,21 +227,5 @@ const styles = StyleSheet.create({
         fontFamily: 'PlusJakartaSans-Bold',
         fontSize: 16,
     },
-    shareBadge: {
-        marginTop: 48,
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 99,
-        overflow: 'hidden',
-        backgroundColor: 'rgba(0,0,0,0.1)',
-    },
-    shareText: {
-        color: 'rgba(255,255,255,0.7)',
-        fontSize: 10,
-        fontFamily: 'PlusJakartaSans-ExtraBold',
-        letterSpacing: 2,
-        marginLeft: 8,
-    }
+
 });
