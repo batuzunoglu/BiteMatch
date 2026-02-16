@@ -75,9 +75,6 @@ export default function DiscoverScreen() {
                 longitude: location.coords.longitude
             });
             refetch(location.coords.latitude, location.coords.longitude);
-        } else {
-            // Re-fetch with mock data if denied
-            refetch();
         }
     };
 
